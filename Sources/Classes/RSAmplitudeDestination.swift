@@ -75,8 +75,8 @@ class RSAmplitudeDestination: RSDestinationPlugin {
             return message
         }
         if !message.event.isEmpty {
+            let productList = extractProducts(from: message.properties)
             if message.event == RSECommerceConstants.ECommOrderCompleted {
-                let productList = extractProducts(from: message.properties)
                 if let properties = message.properties, let productList = productList {
                     let outOfSession = properties["optOutOfSession"] as? Bool ?? false
                     for product in productList {
@@ -89,53 +89,53 @@ class RSAmplitudeDestination: RSDestinationPlugin {
                         }
                     }
                 }
-                if amplitudeConfig.trackRevenuePerProduct {
-                    if let properties = message.properties, let productList = productList {
-                        var revenue: Double?
-                        if let revenueValue = properties["revenue"] as? Double {
-                            revenue = revenueValue
-                        } else if let revenueString = properties["revenue"] as? String, let revenueValue = Double(revenueString) {
-                            revenue = revenueValue
-                        } else if let revenueValue = properties["revenue"] as? Int {
-                            revenue = Double(revenueValue)
-                        }
-                        for product in productList {
-                            guard let revenue = revenue, var price = product.price else { return message }
-                            
-                            let amplitudeRevenue = AMPRevenue()
-                            
-                            if let quantity = product.quantity {
-                                amplitudeRevenue.setQuantity(quantity)
-                            } else {
-                                amplitudeRevenue.setQuantity(1)
-                            }
-                            
-                            if price == 0 {
-                                price = revenue
-                            }
-                            amplitudeRevenue.setPrice(price as NSNumber)
-                            
-                            if let revenueType = product.revenueType {
-                                amplitudeRevenue.setRevenueType(revenueType)
-                            } else if message.event == RSECommerceConstants.ECommOrderCompleted {
-                                amplitudeRevenue.setRevenueType("Purchase")
-                            }
-                            
-                            if let productId = product.productId {
-                                amplitudeRevenue.setProductIdentifier(productId)
-                            }
-                            
-                            if let receiptObject = properties["receipt"], let receipt = try? NSKeyedArchiver.archivedData(withRootObject: receiptObject, requiringSecureCoding: true) {
-                                amplitudeRevenue.setReceipt(receipt)
-                            }
-                            
-                            Amplitude.instance().logRevenueV2(amplitudeRevenue)
-                        }
-                    }
-                }
             } else {
                 let outOfSession = message.properties?["optOutOfSession"] as? Bool ?? false
                 Amplitude.instance().logEvent(message.event, withEventProperties: message.properties, outOfSession: outOfSession)
+            }
+            if amplitudeConfig.trackRevenuePerProduct {
+                if let properties = message.properties, let productList = productList {
+                    var revenue: Double?
+                    if let revenueValue = properties["revenue"] as? Double {
+                        revenue = revenueValue
+                    } else if let revenueString = properties["revenue"] as? String, let revenueValue = Double(revenueString) {
+                        revenue = revenueValue
+                    } else if let revenueValue = properties["revenue"] as? Int {
+                        revenue = Double(revenueValue)
+                    }
+                    for product in productList {
+                        guard let revenue = revenue, var price = product.price else { return message }
+                        
+                        let amplitudeRevenue = AMPRevenue()
+                        
+                        if let quantity = product.quantity {
+                            amplitudeRevenue.setQuantity(quantity)
+                        } else {
+                            amplitudeRevenue.setQuantity(1)
+                        }
+                        
+                        if price == 0 {
+                            price = revenue
+                        }
+                        amplitudeRevenue.setPrice(price as NSNumber)
+                        
+                        if let revenueType = product.revenueType {
+                            amplitudeRevenue.setRevenueType(revenueType)
+                        } else if message.event == RSECommerceConstants.ECommOrderCompleted {
+                            amplitudeRevenue.setRevenueType("Purchase")
+                        }
+                        
+                        if let productId = product.productId {
+                            amplitudeRevenue.setProductIdentifier(productId)
+                        }
+                        
+                        if let receiptObject = properties["receipt"], let receipt = try? NSKeyedArchiver.archivedData(withRootObject: receiptObject, requiringSecureCoding: true) {
+                            amplitudeRevenue.setReceipt(receipt)
+                        }
+                        
+                        Amplitude.instance().logRevenueV2(amplitudeRevenue)
+                    }
+                }
             }
         }
         return message
@@ -200,7 +200,9 @@ extension RSAmplitudeDestination {
                 }
                 amplitudeProduct.revenueType = revenueType
             }
-            productList.append(amplitudeProduct)
+            if !amplitudeProduct.isEmpty {
+                productList.append(amplitudeProduct)
+            }
         }
         var productList = [AmplitudeProduct]()
         if let products = properties["products"] as? [[String: Any]] {
@@ -250,6 +252,10 @@ struct AmplitudeProduct {
             properties["revenueType"] = revenueType
         }
         return properties
+    }
+    
+    var isEmpty: Bool {
+        return productId == nil && name == nil && category == nil && quantity == nil && price == nil && sku == nil && revenueType == nil
     }
 }
 
