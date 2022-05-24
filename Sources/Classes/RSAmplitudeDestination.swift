@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import RudderStack
+import Rudder
 import Amplitude
 
 class RSAmplitudeDestination: RSDestinationPlugin {
@@ -76,7 +76,7 @@ class RSAmplitudeDestination: RSDestinationPlugin {
         }
         if !message.event.isEmpty {
             let productList = extractProducts(from: message.properties)
-            if message.event == RSECommerceConstants.ECommOrderCompleted {
+            if message.event == RSEvents.Ecommerce.orderCompleted {
                 if let properties = message.properties, let productList = productList {
                     let outOfSession = properties["optOutOfSession"] as? Bool ?? false
                     for product in productList {
@@ -84,7 +84,7 @@ class RSAmplitudeDestination: RSDestinationPlugin {
                             Amplitude.instance().logEvent("Product Purchased", withEventProperties: product.dictionaryValue, outOfSession: outOfSession)
                         } else {
                             var properties = message.properties
-                            properties?.removeValue(forKey: "products")
+                            properties?.removeValue(forKey: RSKeys.Ecommerce.products)
                             Amplitude.instance().logEvent("Product Purchased", withEventProperties: properties, outOfSession: outOfSession)
                         }
                     }
@@ -96,11 +96,11 @@ class RSAmplitudeDestination: RSDestinationPlugin {
             if amplitudeConfig.trackRevenuePerProduct {
                 if let properties = message.properties, let productList = productList {
                     var revenue: Double?
-                    if let revenueValue = properties["revenue"] as? Double {
+                    if let revenueValue = properties[RSKeys.Ecommerce.revenue] as? Double {
                         revenue = revenueValue
-                    } else if let revenueString = properties["revenue"] as? String, let revenueValue = Double(revenueString) {
+                    } else if let revenueString = properties[RSKeys.Ecommerce.revenue] as? String, let revenueValue = Double(revenueString) {
                         revenue = revenueValue
-                    } else if let revenueValue = properties["revenue"] as? Int {
+                    } else if let revenueValue = properties[RSKeys.Ecommerce.revenue] as? Int {
                         revenue = Double(revenueValue)
                     }
                     for product in productList {
@@ -121,7 +121,7 @@ class RSAmplitudeDestination: RSDestinationPlugin {
                         
                         if let revenueType = product.revenueType {
                             amplitudeRevenue.setRevenueType(revenueType)
-                        } else if message.event == RSECommerceConstants.ECommOrderCompleted {
+                        } else if message.event == RSEvents.Ecommerce.orderCompleted {
                             amplitudeRevenue.setRevenueType("Purchase")
                         }
                         
@@ -183,17 +183,17 @@ extension RSAmplitudeDestination {
             var amplitudeProduct = AmplitudeProduct()
             for (key, value) in product {
                 switch key {
-                case "product_id":
+                case RSKeys.Ecommerce.productId:
                     amplitudeProduct.productId = "\(value)"
-                case "name":
+                case RSKeys.Ecommerce.productName:
                     amplitudeProduct.name = "\(value)"
-                case "category":
+                case RSKeys.Ecommerce.category:
                     amplitudeProduct.category = "\(value)"
-                case "quantity":
+                case RSKeys.Ecommerce.quantity:
                     amplitudeProduct.quantity = Int("\(value)")
-                case "price":
+                case RSKeys.Ecommerce.price:
                     amplitudeProduct.price = Double("\(value)")
-                case "sku":
+                case RSKeys.Ecommerce.sku:
                     amplitudeProduct.sku = "\(value)"
                 default:
                     break
@@ -205,7 +205,7 @@ extension RSAmplitudeDestination {
             }
         }
         var productList = [AmplitudeProduct]()
-        if let products = properties["products"] as? [[String: Any]] {
+        if let products = properties[RSKeys.Ecommerce.products] as? [[String: Any]] {
             for product in products {
                 handleProductData(productList: &productList, product: product)
             }
@@ -231,22 +231,22 @@ struct AmplitudeProduct {
     var dictionaryValue: [String: Any] {
         var properties = [String: Any]()
         if let productId = productId {
-            properties["productId"] = productId
+            properties[RSKeys.Ecommerce.productId] = productId
         }
         if let name = name {
-            properties["name"] = name
+            properties[RSKeys.Ecommerce.productName] = name
         }
         if let category = category {
-            properties["category"] = category
+            properties[RSKeys.Ecommerce.category] = category
         }
         if let quantity = quantity {
-            properties["quantity"] = quantity
+            properties[RSKeys.Ecommerce.quantity] = quantity
         }
         if let price = price {
-            properties["price"] = price
+            properties[RSKeys.Ecommerce.price] = price
         }
         if let sku = sku {
-            properties["sku"] = sku
+            properties[RSKeys.Ecommerce.sku ] = sku
         }
         if let revenueType = revenueType {
             properties["revenueType"] = revenueType

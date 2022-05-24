@@ -5,7 +5,7 @@ inhibit_all_warnings!
 platform :ios, '13.0'
 
 def shared_pods
-    pod 'RudderStack', :path => '~/Documents/Rudder/RudderStack-Swift/'
+    pod 'Rudder', '~> 2.0.0'
 end
 
 target 'RudderAmplitude' do

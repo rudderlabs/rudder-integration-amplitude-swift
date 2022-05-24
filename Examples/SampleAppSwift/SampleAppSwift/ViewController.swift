@@ -256,11 +256,17 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
         let client = (UIApplication.shared.delegate as? AppDelegate)?.client
         switch indexPath.row {
         case events.count - 1, events.count - 2:
-            client?.identify(item.name, traits: item.properties)
+            if let properties = item.properties {
+                client?.identify(item.name, traits: properties)
+            }
         case events.count - 3:
-            client?.screen(item.name, properties: extractTraits(traits: item.properties))
+            if let properties = extractTraits(traits: item.properties) {
+                client?.screen(item.name, properties: properties)
+            }
         default:
-            client?.track(item.name, properties: item.properties)
+            if let properties = item.properties {
+                client?.track(item.name, properties: properties)
+            }
         }
     }
 }

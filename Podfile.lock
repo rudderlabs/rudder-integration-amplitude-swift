@@ -2,33 +2,32 @@ PODS:
   - Amplitude (8.8.0):
     - AnalyticsConnector (~> 1.0.0)
   - AnalyticsConnector (1.0.0)
+  - Rudder (2.0.1)
   - RudderAmplitude (1.0.0):
     - Amplitude (= 8.8.0)
-    - RudderStack
-  - RudderStack (1.0.0-beta.3)
+    - Rudder (~> 2.0.0)
 
 DEPENDENCIES:
   - Amplitude (= 8.8.0)
+  - Rudder (~> 2.0.0)
   - RudderAmplitude (from `.`)
-  - RudderStack (from `~/Documents/Rudder/RudderStack-Swift/`)
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - Amplitude
     - AnalyticsConnector
+    - Rudder
 
 EXTERNAL SOURCES:
   RudderAmplitude:
     :path: "."
-  RudderStack:
-    :path: "~/Documents/Rudder/RudderStack-Swift/"
 
 SPEC CHECKSUMS:
   Amplitude: 710116f3539c225e86fb70a8abdcd20015683132
   AnalyticsConnector: 4c386d5972ac9da86e22d668564dbbac97558754
-  RudderAmplitude: 45ce8fc003cebefadfc88136df4260ddf04f9d16
-  RudderStack: 7e120a03736b0021f56a504c0966b95ffa9f5bcb
+  Rudder: e16a7f96f253e1d9e290a1fe544570e4784fce68
+  RudderAmplitude: 725c6d58b15e84eba81b1ec02e319f417809fa87
 
-PODFILE CHECKSUM: b76d819501c3af85b1ed6e23388a27d5a69bdad2
+PODFILE CHECKSUM: 44f3946a4db0760576e188d6576e0093264c2127
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.11.3

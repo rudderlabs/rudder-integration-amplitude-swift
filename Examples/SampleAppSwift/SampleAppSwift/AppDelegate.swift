@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import RudderStack
+import Rudder
 import RudderAmplitude
 
 @UIApplicationMain
@@ -24,9 +24,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             .trackLifecycleEvents(true)
             .recordScreenViews(true)
         
-        client = RSClient(config: config)
+        client = RSClient.sharedInstance()
+        client?.configure(with: config)
 
-        client?.add(destination: RudderAmplitudeDestination())        
+        client?.addDestination(RudderAmplitudeDestination())
+        RSClient.sharedInstance().addDestination(RudderAmplitudeDestination())
         return true
     }
 
