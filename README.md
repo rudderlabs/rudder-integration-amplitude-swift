@@ -16,7 +16,7 @@
   <b>
     <a href="https://rudderstack.com">Website</a>
     ·
-    <a href="https://rudderstack.com/docs/stream-sources/rudderstack-sdk-integration-guides/rudderstack-swift-sdk/">Documentation</a>
+    <a href="https://www.rudderstack.com/docs/stream-sources/rudderstack-sdk-integration-guides/rudderstack-ios-sdk/ios-v2/">Documentation</a>
     ·
     <a href="https://rudderstack.com/join-rudderstack-slack-community">Community Slack</a>
   </b>
@@ -27,43 +27,64 @@
 
 This repository contains the resources and assets required to integrate the [RudderStack iOS SDK](https://www.rudderstack.com/docs/stream-sources/rudderstack-sdk-integration-guides/rudderstack-ios-sdk/) with [Amplitude](https://www.amplitude.com/).
 
-| For more information on configuring Amplitude as a destination in RudderStack and the supported events and their mappings, refer to the [Amplitude documentation](https://www.rudderstack.com/docs/destinations/analytics/amplitude/).   |
-| :--|
+For more information on configuring Amplitude as a destination in RudderStack and the supported events and their mappings, refer to the [Amplitude documentation](https://www.rudderstack.com/docs/destinations/analytics/amplitude/).
+
+| Important: This device mode integration is supported for Amplitude v8.8.0 and above. |
+|:----|
 
 
 ## Step 1: Integrate the SDK with Amplitude
 
 1. Add [Amplitude](https://www.amplitude.com/) as a destination in the [RudderStack dashboard](https://app.rudderstack.com/).
-2. `RudderAmplitude` is available through [CocoaPods](https://cocoapods.org). To install it, add the following line to your Podfile and followed by `pod install`, as shown:
+2. `RudderAmplitude` is available through [CocoaPods](https://cocoapods.org). To install it, add the following line to your Podfile:
 
 ```ruby
-pod 'RudderAmplitude'
+pod 'RudderAmplitude', '~> 1.0.0'
 ```
 
-## Step 2: Initialize the RudderStack client (`RSClient`)
+3. Run the `pod install` command.
 
-Place the following in your ```AppDelegate``` under the ```didFinishLaunchingWithOptions``` method:
+## Step 2: Import the SDK
+
+### Swift
+
+```swift
+import RudderAmplitude
+```
+
+### Objective C
+
+```objective-c
+@import RudderAmplitude;
+```
+
+## Step 3: Initialize the RudderStack client (`RSClient`)
+
+Place the following code in your `AppDelegate` file under the `didFinishLaunchingWithOptions` method.
+
+### Swift
+
+```swift
+let config: RSConfig = RSConfig(writeKey: WRITE_KEY)
+            .dataPlaneURL(DATA_PLANE_URL)
+        
+RSClient.sharedInstance().configure(with: config)
+RSClient.sharedInstance().addDestination(RudderAmplitudeDestination())
+```
 
 ### Objective C
 
 ```objective-c
 RSConfig *config = [[RSConfig alloc] initWithWriteKey:WRITE_KEY];
 [config dataPlaneURL:DATA_PLANE_URL];
+
 [[RSClient sharedInstance] configureWith:config];
 [[RSClient sharedInstance] addDestination:[[RudderAmplitudeDestination alloc] init]];
 ```
-### Swift
 
-```swift
-let config: RSConfig = RSConfig(writeKey: WRITE_KEY)
-            .dataPlaneURL(DATA_PLANE_URL)
-RSClient.sharedInstance().configure(with: config)
-RSClient.sharedInstance().addDestination(RudderAmplitudeDestination())
-```
+## Step 4: Send events
 
-## Step 3: Send events
-
-Follow the steps listed in the [RudderStack Swift SDK](https://github.com/rudderlabs/rudder-sdk-ios/tree/master-v2#sending-events) repo to start sending events to Amplitude.
+Follow the steps listed in the [RudderStack iOS SDK](https://github.com/rudderlabs/rudder-sdk-ios/tree/master-v2#sending-events) repo to start sending events to Amplitude.
 
 ## About RudderStack
 
