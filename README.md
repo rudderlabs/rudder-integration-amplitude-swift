@@ -25,7 +25,7 @@
 ---
 # Integrating RudderStack iOS SDK with Amplitude
 
-This repository contains the resources and assets required to integrate the [RudderStack iOS SDK](https://www.rudderstack.com/docs/stream-sources/rudderstack-sdk-integration-guides/rudderstack-ios-sdk/) with [Amplitude](https://www.amplitude.com/).
+This repository contains the resources and assets required to integrate the [RudderStack iOS SDK](https://www.rudderstack.com/docs/stream-sources/rudderstack-sdk-integration-guides/rudderstack-ios-sdk/ios-v2/) with [Amplitude](https://www.amplitude.com/).
 
 For more information on configuring Amplitude as a destination in RudderStack and the supported events and their mappings, refer to the [Amplitude documentation](https://www.rudderstack.com/docs/destinations/analytics/amplitude/).
 
@@ -60,7 +60,7 @@ import RudderAmplitude
 
 ## Step 3: Initialize the RudderStack client (`RSClient`)
 
-Place the following code in your `AppDelegate` file under the `didFinishLaunchingWithOptions` method.
+Place the following in your `AppDelegate` under the `didFinishLaunchingWithOptions` method.
 
 ### Swift
 
@@ -95,4 +95,4 @@ RudderStack is the **customer data platform** for developers. With RudderStack, 
 
 ## Contact us
 
-For queries on configuring or using this integration, [contact us](mailto:%20docs@rudderstack.com) or start a conversation in our [Slack](https://rudderstack.com/join-rudderstack-slack-community) community.
+For queries on configuring or using this integration, start a conversation in our [Slack](https://rudderstack.com/join-rudderstack-slack-community) community.
