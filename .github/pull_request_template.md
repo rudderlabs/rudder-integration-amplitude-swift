@@ -4,8 +4,8 @@
 - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
 ## Checklist:
 - [ ] Version updated in `README`
-- [ ] Version updated in `RudderSingular.xcodeproj`
-- [ ] Version updated in `RudderSingular.podspec`
+- [ ] Version updated in `RudderAmplitude.xcodeproj`
+- [ ] Version updated in `RudderAmplitude.podspec`
 - [ ] `CHANGELOG` Updated
 - [ ] I have performed a self-review of my own code
 - [ ] I have commented my code, particularly in hard-to-understand areas
