@@ -18,21 +18,25 @@ class RSAmplitudeDestination: RSDestinationPlugin {
         
     func update(serverConfig: RSServerConfig, type: UpdateType) {
         guard type == .initial else { return }
-        if let amplitudeConfig: AmplitudeConfig = serverConfig.getConfig(forPlugin: self) {
-            self.amplitudeConfig = amplitudeConfig
-            
-            Amplitude.instance().trackingSessionEvents = amplitudeConfig.trackSessionEvents
-            Amplitude.instance().eventUploadPeriodSeconds = Int32(amplitudeConfig.eventUploadPeriodMillis / 1000)
-            Amplitude.instance().eventUploadThreshold = Int32(amplitudeConfig.eventUploadThreshold)
-            if amplitudeConfig.useIdfaAsDeviceId {
-                Amplitude.instance().useAdvertisingIdForDeviceId()
-            }
-            Amplitude.instance().initializeApiKey(amplitudeConfig.apiKey)
+        guard let amplitudeConfig: AmplitudeConfig = serverConfig.getConfig(forPlugin: self) else {
+            client?.log(message: "Failed to Initialize Amplitude Factory", logLevel: .warning)
+            return
         }
+        
+        self.amplitudeConfig = amplitudeConfig
+        Amplitude.instance().trackingSessionEvents = amplitudeConfig.trackSessionEvents
+        Amplitude.instance().eventUploadPeriodSeconds = Int32(amplitudeConfig.eventUploadPeriodMillis / 1000)
+        Amplitude.instance().eventUploadThreshold = Int32(amplitudeConfig.eventUploadThreshold)
+        if amplitudeConfig.useIdfaAsDeviceId {
+            Amplitude.instance().useAdvertisingIdForDeviceId()
+        }
+        Amplitude.instance().initializeApiKey(amplitudeConfig.apiKey)
+        client?.log(message: "Initializing Amplitude SDK.", logLevel: .debug)
     }
     
     func identify(message: IdentifyMessage) -> IdentifyMessage? {
         guard let amplitudeConfig = amplitudeConfig else {
+            client?.log(message: "Amplitude instance is not initialised", logLevel: .warning)
             return message
         }
         
@@ -40,12 +44,9 @@ class RSAmplitudeDestination: RSDestinationPlugin {
             Amplitude.instance().setUserId(userId)
         }
         let identify = AMPIdentify()
-        var outOfSession = false
+        let outOfSession = message.traits?["optOutOfSession"] as? Bool ?? false
         if let traits = message.traits {
             for (key, value) in traits {
-                if key == "optOutOfSession" {
-                    outOfSession = value as? Bool ?? false
-                }
                 if let traitsToIncrement = amplitudeConfig.traitsToIncrement, traitsToIncrement.contains(key) {
                     identify.add(key, value: value as? NSObject)
                     continue
@@ -75,85 +76,28 @@ class RSAmplitudeDestination: RSDestinationPlugin {
             return message
         }
         if !message.event.isEmpty {
-//            let productList = extractProducts(from: message.properties)
-//            if message.event == RSEvents.Ecommerce.orderCompleted {
-//                if let properties = message.properties, let productList = productList {
-//                    let outOfSession = properties["optOutOfSession"] as? Bool ?? false
-//                    for product in productList {
-//                        if amplitudeConfig.trackProductsOnce {
-//                            Amplitude.instance().logEvent("Product Purchased", withEventProperties: product.dictionaryValue, outOfSession: outOfSession)
-//                        } else {
-//                            var properties = message.properties
-//                            properties?.removeValue(forKey: RSKeys.Ecommerce.products)
-//                            Amplitude.instance().logEvent("Product Purchased", withEventProperties: properties, outOfSession: outOfSession)
-//                        }
-//                    }
-//                }
-//            } else {
-//                let outOfSession = message.properties?["optOutOfSession"] as? Bool ?? false
-//                Amplitude.instance().logEvent(message.event, withEventProperties: message.properties, outOfSession: outOfSession)
-//            }
-//            if amplitudeConfig.trackRevenuePerProduct {
-//                if let properties = message.properties, let productList = productList {
-//                    var revenue: Double?
-//                    if let revenueValue = properties[RSKeys.Ecommerce.revenue] as? Double {
-//                        revenue = revenueValue
-//                    } else if let revenueString = properties[RSKeys.Ecommerce.revenue] as? String, let revenueValue = Double(revenueString) {
-//                        revenue = revenueValue
-//                    } else if let revenueValue = properties[RSKeys.Ecommerce.revenue] as? Int {
-//                        revenue = Double(revenueValue)
-//                    }
-//                    for product in productList {
-//                        guard let revenue = revenue, var price = product.price else { return message }
-//
-//                        let amplitudeRevenue = AMPRevenue()
-//
-//                        if let quantity = product.quantity {
-//                            amplitudeRevenue.setQuantity(quantity)
-//                        } else {
-//                            amplitudeRevenue.setQuantity(1)
-//                        }
-//
-//                        if price == 0 {
-//                            price = revenue
-//                        }
-//                        amplitudeRevenue.setPrice(price as NSNumber)
-//
-//                        if let revenueType = product.revenueType {
-//                            amplitudeRevenue.setRevenueType(revenueType)
-//                        } else if message.event == RSEvents.Ecommerce.orderCompleted {
-//                            amplitudeRevenue.setRevenueType("Purchase")
-//                        }
-//
-//                        if let productId = product.productId {
-//                            amplitudeRevenue.setProductIdentifier(productId)
-//                        }
-//
-//                        if let receiptObject = properties["receipt"], let receipt = try? NSKeyedArchiver.archivedData(withRootObject: receiptObject, requiringSecureCoding: true) {
-//                            amplitudeRevenue.setReceipt(receipt)
-//                        }
-//
-//                        Amplitude.instance().logRevenueV2(amplitudeRevenue)
-//                    }
-//                }
-//            }
-            
+            /// If `trackProductsOnce` is enabled
             if amplitudeConfig.trackProductsOnce {
-                if let products = message.properties?["products"] as? [[String: Any]] {
-                    logEventAndCorrespondingRevenue(message.properties, withEventName: message.event, withDoNotTrackRevenue: amplitudeConfig.trackRevenuePerProduct)
-                    if (amplitudeConfig.trackRevenuePerProduct) {
-                        trackingEventAndRevenuePerProduct(message.properties, withProductsArray: products, withTrackEventPerProduct: false)
+                if var properties = message.properties, let products = extractProducts(from: message.properties) {
+                    properties[RSKeys.Ecommerce.products] = products
+                    logEventAndCorrespondingRevenue(properties, withEventName: message.event, withDoNotTrackRevenue: amplitudeConfig.trackRevenuePerProduct)
+                    /// If `trackRevenuePerProduct` is enabled
+                    if amplitudeConfig.trackRevenuePerProduct {
+                        trackingEventAndRevenuePerProduct(properties, withProductsArray: products, withTrackEventPerProduct: false)
                     }
+                    return message
                 }
                 logEventAndCorrespondingRevenue(message.properties, withEventName: message.event, withDoNotTrackRevenue: false)
                 return message
             }
-            if var properties = message.properties, let products = properties[RSKeys.Ecommerce.products] as? [[String: Any]] {
+            /// If `products array` is present in the properties
+            if var properties = message.properties, let products = extractProducts(from: message.properties) {
                 properties.removeValue(forKey: RSKeys.Ecommerce.products)
                 logEventAndCorrespondingRevenue(properties, withEventName: message.event, withDoNotTrackRevenue: amplitudeConfig.trackRevenuePerProduct)
                 trackingEventAndRevenuePerProduct(properties, withProductsArray: products, withTrackEventPerProduct: true)
                 return message
             }
+            // Default case
             logEventAndCorrespondingRevenue(message.properties, withEventName: message.event, withDoNotTrackRevenue: false)
         }
         return message
@@ -163,17 +107,18 @@ class RSAmplitudeDestination: RSDestinationPlugin {
         guard let amplitudeConfig = amplitudeConfig else {
             return message
         }
+        
         if !message.name.isEmpty {
             if amplitudeConfig.trackAllPages {
-                Amplitude.instance().logEvent("Viewed \(message.name) Screen", withEventProperties: message.properties)
+                Amplitude.instance().logEvent("Viewed \(message.name) Screen", withEventProperties: message.properties, outOfSession: false)
             }
             if amplitudeConfig.trackNamedPages {
-                Amplitude.instance().logEvent("Viewed \(message.name) Screen", withEventProperties: message.properties)
+                Amplitude.instance().logEvent("Viewed \(message.name) Screen", withEventProperties: message.properties, outOfSession: false)
             }
-            if amplitudeConfig.trackCategorizedPages {
-                if let category = message.category {
-                    Amplitude.instance().logEvent("Viewed \(category) Screen", withEventProperties: message.properties)
-                }
+        }
+        if amplitudeConfig.trackCategorizedPages {
+            if let category = message.category, !category.isEmpty {
+                Amplitude.instance().logEvent("Viewed \(category) Screen", withEventProperties: message.properties, outOfSession: false)
             }
         }
         return message
@@ -192,61 +137,51 @@ class RSAmplitudeDestination: RSDestinationPlugin {
 // MARK: - Support methods
 
 extension RSAmplitudeDestination {
-    func extractProducts(from properties: [String: Any]?) -> [AmplitudeProduct]? {
+    func extractProducts(from properties: [String: Any]?) -> [[String: Any]]? {
         guard let properties = properties else {
             return nil
         }
         
-        func handleProductData(productList: inout [AmplitudeProduct], product: [String: Any]) {
-//            let revenueType = properties["revenue_type"] as? String
-            var amplitudeProduct = AmplitudeProduct()
+        func handleProductData(productList: inout [[String: Any]], product: [String: Any]) {
+            var amplitudeProduct = [String: Any]()
             for (key, value) in product {
                 switch key {
-                case RSKeys.Ecommerce.productId:
-                    amplitudeProduct.productId = "\(value)"
-                case RSKeys.Ecommerce.productName:
-                    amplitudeProduct.name = "\(value)"
-                case RSKeys.Ecommerce.category:
-                    amplitudeProduct.category = "\(value)"
+                case RSKeys.Ecommerce.productId, RSKeys.Ecommerce.productName, RSKeys.Ecommerce.category, RSKeys.Ecommerce.sku:
+                    amplitudeProduct[key] = "\(value)"
                 case RSKeys.Ecommerce.quantity:
-                    amplitudeProduct.quantity = Int("\(value)")
+                    amplitudeProduct[key] = Int("\(value)")
                 case RSKeys.Ecommerce.price:
-                    amplitudeProduct.price = Double("\(value)")
-                case RSKeys.Ecommerce.sku:
-                    amplitudeProduct.sku = "\(value)"
+                    amplitudeProduct[key] = Double("\(value)")  // TODO: Check if it's working
                 default:
                     break
                 }
-//                amplitudeProduct.revenueType = revenueType
             }
             if !amplitudeProduct.isEmpty {
                 productList.append(amplitudeProduct)
             }
         }
-        var productList = [AmplitudeProduct]()
+        var productList = [[String: Any]]()
         if let products = properties[RSKeys.Ecommerce.products] as? [[String: Any]] {
             for product in products {
                 handleProductData(productList: &productList, product: product)
             }
-        } else {
-            handleProductData(productList: &productList, product: properties)
-        }
-        if !productList.isEmpty {
-            return productList
+            if !productList.isEmpty {
+                return productList
+            }
         }
         return nil
     }
     
-    func logEventAndCorrespondingRevenue(_ properties: [String: Any]?, withEventName eventName: String, withDoNotTrackRevenue doNotTrackRevenue: Bool) {
+    func logEventAndCorrespondingRevenue(_ properties: [String: Any]?, withEventName event: String, withDoNotTrackRevenue doNotTrackRevenue: Bool) {
         guard let properties = properties else {    // TODO: Check if ese block is called or not when property is nil
-            Amplitude.instance().logEvent(eventName)
+            Amplitude.instance().logEvent(event)
             return
         }
         if let optOutOfSession: Bool = properties["optOutOfSession"] as? Bool {
-            Amplitude.instance().logEvent(eventName, withEventProperties: properties, outOfSession: optOutOfSession)
+            Amplitude.instance().logEvent(event, withEventProperties: properties, outOfSession: optOutOfSession)
         }
-        if (properties["revenue"] != nil && !doNotTrackRevenue) {
-            trackRevenue(properties, withEventName: eventName)
+        if properties["revenue"] != nil && !doNotTrackRevenue {
+            trackRevenue(properties, withEventName: event)
         }
     }
     
@@ -254,11 +189,11 @@ extension RSAmplitudeDestination {
         guard let properties = properties else {
             return
         }
-        let revenueType = properties["revenue_type"]
+
         for var product: [String: Any] in products {
-            if let trackRevenuePerProduct: Bool = amplitudeConfig?.trackRevenuePerProduct, trackRevenuePerProduct == true {
-                if (revenueType != nil) {
-                    product["revenueType"] = revenueType
+            if amplitudeConfig?.trackRevenuePerProduct == true {
+                if properties["revenue_type"] != nil {
+                    product["revenueType"] = properties["revenue_type"]
                 }
                 trackRevenue(product, withEventName: "Product Purchased")
             }
@@ -277,6 +212,7 @@ extension RSAmplitudeDestination {
             guard let properties = properties else {
                 return nil
             }
+            
             var revenueDetail = RevenueProduct()
             if let quantity = properties[RSKeys.Ecommerce.quantity] as? Int {
                 revenueDetail.quantity = quantity
@@ -284,13 +220,13 @@ extension RSAmplitudeDestination {
             if let revenue = properties[RSKeys.Ecommerce.revenue] as? Double {
                 revenueDetail.revenue = revenue
             }
-            if let price = properties[RSKeys.Ecommerce.price] as? NSNumber{
+            if let price = properties[RSKeys.Ecommerce.price] as? NSNumber {
                 revenueDetail.price = price
             }
             if let productId = properties[RSKeys.Ecommerce.productId] as? String {
                 revenueDetail.productId = productId
             }
-            if let revenueType = properties["revenue_type"] as? String{
+            if let revenueType = properties["revenue_type"] as? String {
                 revenueDetail.revenueType = revenueType
             }
             if let receiptObject = properties["receipt"], let receipt = try? NSKeyedArchiver.archivedData(withRootObject: receiptObject, requiringSecureCoding: true) {
@@ -300,14 +236,14 @@ extension RSAmplitudeDestination {
         }
         
         let mapRevenueType = [
-            "order completed" : "Purchase",
-            "completed order" : "Purchase",
-            "product purchased" : "Purchase"
+            "order completed": "Purchase",
+            "completed order": "Purchase",
+            "product purchased": "Purchase"
         ]
         
         if let revenueDetail = getRevenueDetails(properties: properties) {
             if revenueDetail.revenue == nil && revenueDetail.price != nil {
-                RSClient.sharedInstance().log(message: "revenue or price is not present.", logLevel: .debug)
+                client?.log(message: "revenue or price is not present.", logLevel: .debug)
                 return
             }
             
@@ -317,7 +253,7 @@ extension RSAmplitudeDestination {
             var price: NSNumber = revenueDetail.price ?? 0
             if price == 0 {
                 price = revenueDetail.revenue as? NSNumber ?? 0
-                quantity = 1;
+                quantity = 1
             }
             
             let amplitudeRevenue = AMPRevenue()
@@ -339,9 +275,9 @@ extension RSAmplitudeDestination {
                 Amplitude.instance().logRevenueV2(amplitudeRevenue)
             }
         }
-        
     }
 }
+
 struct RevenueProduct {
     var quantity: Int?
     var revenue: Double?
