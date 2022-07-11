@@ -14,11 +14,11 @@ class RSAmplitudeDestination: RSDestinationPlugin {
     let key = "Amplitude"
     var client: RSClient?
     var controller = RSController()
-    var amplitudeConfig: AmplitudeConfig?
+    var amplitudeConfig: RudderAmplitudeConfig?
         
     func update(serverConfig: RSServerConfig, type: UpdateType) {
         guard type == .initial else { return }
-        guard let amplitudeConfig: AmplitudeConfig = serverConfig.getConfig(forPlugin: self) else {
+        guard let amplitudeConfig: RudderAmplitudeConfig = serverConfig.getConfig(forPlugin: self) else {
             client?.log(message: "Failed to Initialize Amplitude Factory", logLevel: .warning)
             return
         }
@@ -73,6 +73,7 @@ class RSAmplitudeDestination: RSDestinationPlugin {
     
     func track(message: TrackMessage) -> TrackMessage? {
         guard let amplitudeConfig = amplitudeConfig else {
+            client?.log(message: "Amplitude config is not initalised properly, hence dropping track events.", logLevel: .warning)
             return message
         }
         if !message.event.isEmpty {
@@ -105,6 +106,7 @@ class RSAmplitudeDestination: RSDestinationPlugin {
     
     func screen(message: ScreenMessage) -> ScreenMessage? {
         guard let amplitudeConfig = amplitudeConfig else {
+            client?.log(message: "Amplitude config is not initalised properly, hence dropping screen events.", logLevel: .warning)
             return message
         }
         
@@ -151,7 +153,7 @@ extension RSAmplitudeDestination {
                 case RSKeys.Ecommerce.quantity:
                     amplitudeProduct[key] = Int("\(value)")
                 case RSKeys.Ecommerce.price:
-                    amplitudeProduct[key] = Double("\(value)")  // TODO: Check if it's working
+                    amplitudeProduct[key] = Double("\(value)")
                 default:
                     break
                 }
@@ -173,14 +175,18 @@ extension RSAmplitudeDestination {
     }
     
     func logEventAndCorrespondingRevenue(_ properties: [String: Any]?, withEventName event: String, withDoNotTrackRevenue doNotTrackRevenue: Bool) {
-        guard let properties = properties else {    // TODO: Check if ese block is called or not when property is nil
+        guard let properties = properties else {
             Amplitude.instance().logEvent(event)
             return
         }
         if let optOutOfSession: Bool = properties["optOutOfSession"] as? Bool {
             Amplitude.instance().logEvent(event, withEventProperties: properties, outOfSession: optOutOfSession)
         }
-        if properties["revenue"] != nil && !doNotTrackRevenue {
+        if !doNotTrackRevenue {
+            guard let _ = properties[RSKeys.Ecommerce.revenue] else {
+                client?.log(message: "Dropping trackRevenue method call, as Revenue parameter is not present in the properties.", logLevel: .debug)
+                return
+            }
             trackRevenue(properties, withEventName: event)
         }
     }
@@ -192,9 +198,14 @@ extension RSAmplitudeDestination {
 
         for var product: [String: Any] in products {
             if amplitudeConfig?.trackRevenuePerProduct == true {
+                guard let price = product[RSKeys.Ecommerce.price] else {
+                    client?.log(message: "Dropping trackRevenue method call, as Price parameter is not present in the products array", logLevel: .debug)
+                    continue
+                }
                 if properties["revenue_type"] != nil {
                     product["revenueType"] = properties["revenue_type"]
                 }
+                /// `Price` parameter needs to be present in the products array
                 trackRevenue(product, withEventName: "Product Purchased")
             }
             if trackEventPerProduct {
@@ -229,7 +240,9 @@ extension RSAmplitudeDestination {
             if let revenueType = properties["revenue_type"] as? String {
                 revenueDetail.revenueType = revenueType
             }
-            if let receiptObject = properties["receipt"], let receipt = try? NSKeyedArchiver.archivedData(withRootObject: receiptObject, requiringSecureCoding: true) {
+            /// `receipt` type is url. Reference: https://www.hackingwithswift.com/example-code/system/how-to-save-and-load-objects-with-nskeyedarchiver-and-nskeyedunarchiver
+            if let receiptObject = properties["receipt"] as? URL,
+                let receipt = try? NSKeyedArchiver.archivedData(withRootObject: receiptObject, requiringSecureCoding: true) {
                 revenueDetail.receipt = receipt
             }
             return revenueDetail
@@ -241,15 +254,11 @@ extension RSAmplitudeDestination {
             "product purchased": "Purchase"
         ]
         
-        if let revenueDetail = getRevenueDetails(properties: properties) {
-            if revenueDetail.revenue == nil && revenueDetail.price != nil {
-                client?.log(message: "revenue or price is not present.", logLevel: .debug)
-                return
-            }
-            
+        if let revenueDetail = getRevenueDetails(properties: properties), !revenueDetail.isEmpty {
             /// Default value of `Quantity` is set to 1 and `price` is set to 0
             var quantity: Int = revenueDetail.quantity ?? 1
             let revenueType: String? = revenueDetail.revenueType ?? mapRevenueType[eventName.lowercased()]
+            // Handle Price:
             var price: NSNumber = revenueDetail.price ?? 0
             if price == 0 {
                 price = revenueDetail.revenue as? NSNumber ?? 0
@@ -285,49 +294,13 @@ struct RevenueProduct {
     var productId: String?
     var revenueType: String?
     var receipt: Data?
-}
-
-struct AmplitudeProduct {
-    var productId: String?
-    var name: String?
-    var category: String?
-    var quantity: Int?
-    var price: Double?
-    var sku: String?
-    var revenueType: String?
-    
-    var dictionaryValue: [String: Any] {
-        var properties = [String: Any]()
-        if let productId = productId {
-            properties[RSKeys.Ecommerce.productId] = productId
-        }
-        if let name = name {
-            properties[RSKeys.Ecommerce.productName] = name
-        }
-        if let category = category {
-            properties[RSKeys.Ecommerce.category] = category
-        }
-        if let quantity = quantity {
-            properties[RSKeys.Ecommerce.quantity] = quantity
-        }
-        if let price = price {
-            properties[RSKeys.Ecommerce.price] = price
-        }
-        if let sku = sku {
-            properties[RSKeys.Ecommerce.sku ] = sku
-        }
-        if let revenueType = revenueType {
-            properties["revenueType"] = revenueType
-        }
-        return properties
-    }
     
     var isEmpty: Bool {
-        return productId == nil && name == nil && category == nil && quantity == nil && price == nil && sku == nil && revenueType == nil
+        return quantity == nil && revenue == nil && price == nil && productId == nil && revenueType == nil && receipt == nil
     }
 }
 
-struct AmplitudeConfig: Codable {
+struct RudderAmplitudeConfig: Codable {
     
     struct Traits: Codable {
         private let _traits: String?
@@ -385,14 +358,14 @@ struct AmplitudeConfig: Codable {
         return _trackSessionEvents ?? false
     }
     
-    private let _eventUploadPeriodMillis: Int?
+    private let _eventUploadPeriodMillis: String?
     var eventUploadPeriodMillis: Int {
-        return _eventUploadPeriodMillis ?? 0
+        return Int(_eventUploadPeriodMillis ?? "") ?? 0
     }
     
-    private let _eventUploadThreshold: Int?
+    private let _eventUploadThreshold: String?
     var eventUploadThreshold: Int {
-        return _eventUploadThreshold ?? 0
+        return Int(_eventUploadThreshold ?? "") ?? 0
     }
     
     private let _versionName: String?
