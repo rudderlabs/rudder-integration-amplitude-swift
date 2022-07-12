@@ -257,7 +257,6 @@ extension RSAmplitudeDestination {
         if let revenueDetail = getRevenueDetails(properties: properties), !revenueDetail.isEmpty {
             /// Default value of `Quantity` is set to 1 and `price` is set to 0
             var quantity: Int = revenueDetail.quantity ?? 1
-            let revenueType: String? = revenueDetail.revenueType ?? mapRevenueType[eventName.lowercased()]
             // Handle Price:
             var price: NSNumber = revenueDetail.price ?? 0
             if price == 0 {
@@ -270,7 +269,7 @@ extension RSAmplitudeDestination {
                 .setQuantity(quantity)
                 .setEventProperties(properties)
             
-            if let revenueType = revenueType, !revenueType.isEmpty {
+            if let revenueType = revenueDetail.revenueType ?? mapRevenueType[eventName.lowercased()], !revenueType.isEmpty {
                 amplitudeRevenue?.setRevenueType(revenueType)
             }
             if let productId = revenueDetail.productId, !productId.isEmpty {
