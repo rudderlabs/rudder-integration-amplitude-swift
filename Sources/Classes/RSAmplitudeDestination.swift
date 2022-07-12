@@ -295,7 +295,7 @@ struct RevenueProduct {
     var receipt: Data?
     
     var isEmpty: Bool {
-        return quantity == nil && revenue == nil && price == nil && productId == nil && revenueType == nil && receipt == nil
+        return quantity == nil && revenue == nil && price == nil && productId == nil && revenueType == nil
     }
 }
 
