@@ -28,8 +28,73 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         client?.configure(with: config)
 
         client?.addDestination(RudderAmplitudeDestination())
-        RSClient.sharedInstance().addDestination(RudderAmplitudeDestination())
+        sendEvents()
+        
         return true
+    }
+    func sendEvents() {
+        track()
+        screen()
+        RSClient.sharedInstance().reset()
+        identify()
+        func identify() {
+            RSClient.sharedInstance().identify("UserId_1")
+            RSClient.sharedInstance().track("UserId_TrackEvent_2")
+            
+            let traits: [String: Any] = [
+                "optOutOfSession": true,
+                "traits-1": "34",
+                "traits-2": true,
+                "traits-3": 456.78,
+                "traits-4": "test@example.com",
+                "key-1": "value-1"
+            ]
+            RSClient.sharedInstance().identify("UserId_3", traits: traits)
+            RSClient.sharedInstance().track("UserId_TrackEvent_3")
+
+            let traits: [String: Any] = [
+                "key-1": "value-1"
+            ]
+            RSClient.sharedInstance().identify("UserId_4", traits: traits)
+            RSClient.sharedInstance().track("UserId_TrackEvent_4")
+        }
+        func screen() {
+            let properties: [String: Any] = [
+                "key-1": "value-1",
+                "category": "mobile"
+            ]
+            RSClient.sharedInstance().screen("Screen Event-3", category: "Apple", properties: properties)
+        }
+        func track() {
+            let products: [String: Any] = [
+                RSKeys.Ecommerce.productId: "1001",
+                RSKeys.Ecommerce.productName: "Books-1",
+                RSKeys.Ecommerce.category: "Books",
+                RSKeys.Ecommerce.sku: "Books-sku",
+                RSKeys.Ecommerce.quantity: 2,
+                RSKeys.Ecommerce.price: 1203.2
+            ]
+            let fullPath = getDocumentsDirectory().appendingPathComponent("randomFilename")
+            func getDocumentsDirectory() -> URL {
+                let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+                return paths[0]
+            }
+            let properties: [String: Any] = [
+                RSKeys.Ecommerce.products: [products],
+                "optOutOfSession": true,
+                RSKeys.Ecommerce.revenue: 1203,
+                RSKeys.Ecommerce.quantity: 10,
+                RSKeys.Ecommerce.price: 101.34,
+                RSKeys.Ecommerce.productId: "123",
+                "revenue_type": "revenue_type_value",
+                "receipt": fullPath
+            ]
+            // Track call with properties
+            RSClient.sharedInstance().track("Event-9", properties: properties)
+            
+            // Track call without properties:
+            RSClient.sharedInstance().track("Event-11")
+        }
     }
 
     // MARK: UISceneSession Lifecycle
