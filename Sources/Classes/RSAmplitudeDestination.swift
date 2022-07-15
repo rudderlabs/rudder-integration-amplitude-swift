@@ -183,7 +183,7 @@ extension RSAmplitudeDestination {
             Amplitude.instance().logEvent(event, withEventProperties: properties, outOfSession: optOutOfSession)
         }
         if !doNotTrackRevenue {
-            if properties[RSKeys.Ecommerce.revenue] != nil {
+            if properties[RSKeys.Ecommerce.revenue] == nil {
                 client?.log(message: "Dropping trackRevenue method call, as Revenue parameter is not present in the properties.", logLevel: .debug)
                 return
             }
@@ -198,7 +198,7 @@ extension RSAmplitudeDestination {
 
         for var product: [String: Any] in products {
             if amplitudeConfig?.trackRevenuePerProduct == true {
-                if product[RSKeys.Ecommerce.price] != nil {
+                if product[RSKeys.Ecommerce.price] == nil {
                     client?.log(message: "Dropping trackRevenue method call, as Price parameter is not present in the products array", logLevel: .debug)
                     continue
                 }
