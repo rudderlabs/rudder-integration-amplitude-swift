@@ -51,10 +51,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             ]
             RSClient.sharedInstance().identify("UserId_3", traits: traits)
             RSClient.sharedInstance().track("UserId_TrackEvent_3")
-
-            let traits: [String: Any] = [
-                "key-1": "value-1"
-            ]
+            
             RSClient.sharedInstance().identify("UserId_4", traits: traits)
             RSClient.sharedInstance().track("UserId_TrackEvent_4")
         }
