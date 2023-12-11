@@ -39,7 +39,7 @@ For more information on configuring Amplitude as a destination in RudderStack an
 2. `RudderAmplitude` is available through [CocoaPods](https://cocoapods.org). To install it, add the following line to your Podfile:
 
 ```ruby
-pod 'RudderAmplitude', '~> 1.0.0'
+pod 'RudderAmplitude', '~> 1.1.0'
 ```
 
 3. Run the `pod install` command.
