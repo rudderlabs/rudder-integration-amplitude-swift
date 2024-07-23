@@ -13,9 +13,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3E54B6A7070163B5B83ED1EC /* Pods-RudderAmplitude.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RudderAmplitude.debug.xcconfig"; path = "Target Support Files/Pods-RudderAmplitude/Pods-RudderAmplitude.debug.xcconfig"; sourceTree = "<group>"; };
 		AACD7E2888922458257375A3 /* Pods_RudderAmplitude.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RudderAmplitude.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B900E3348B0208F554895186 /* Pods-RudderAmplitude.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RudderAmplitude.debug.xcconfig"; path = "Target Support Files/Pods-RudderAmplitude/Pods-RudderAmplitude.debug.xcconfig"; sourceTree = "<group>"; };
-		C75CCF0D7841B0F7789E73E5 /* Pods-RudderAmplitude.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RudderAmplitude.release.xcconfig"; path = "Target Support Files/Pods-RudderAmplitude/Pods-RudderAmplitude.release.xcconfig"; sourceTree = "<group>"; };
+		CECADF938407B3B139072E44 /* Pods-RudderAmplitude.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RudderAmplitude.release.xcconfig"; path = "Target Support Files/Pods-RudderAmplitude/Pods-RudderAmplitude.release.xcconfig"; sourceTree = "<group>"; };
 		ED2A28EB2770560400646788 /* RudderAmplitude.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RudderAmplitude.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED2A28F72770570400646788 /* RudderAmplitude.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RudderAmplitude.h; sourceTree = "<group>"; };
 		ED2A28FA2770591E00646788 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
@@ -37,11 +37,11 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		208F25C796D8593BF8DAB48E /* Pods */ = {
+		61E32BCE5D5D3ED775DFA1DF /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				B900E3348B0208F554895186 /* Pods-RudderAmplitude.debug.xcconfig */,
-				C75CCF0D7841B0F7789E73E5 /* Pods-RudderAmplitude.release.xcconfig */,
+				3E54B6A7070163B5B83ED1EC /* Pods-RudderAmplitude.debug.xcconfig */,
+				CECADF938407B3B139072E44 /* Pods-RudderAmplitude.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -63,8 +63,8 @@
 				ED2A28FB2770591E00646788 /* RudderAmplitude.podspec */,
 				ED2A28F52770570400646788 /* Sources */,
 				ED2A28EC2770560400646788 /* Products */,
-				208F25C796D8593BF8DAB48E /* Pods */,
 				E82A8A6F4964175B32748049 /* Frameworks */,
+				61E32BCE5D5D3ED775DFA1DF /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -204,6 +204,7 @@
 		};
 		FDD81D26287859400013911E /* SwiftLint Script */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -215,10 +216,11 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"${SRCROOT}/.swiftlint-output",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a scriptif which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n or drag a script file from your workspace to insert its path.\n";
+			shellScript = "# Type a script\nif which swiftlint >/dev/null; then\n  swiftlint\n  touch ${SRCROOT}/.swiftlint-output\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -358,14 +360,14 @@
 		};
 		ED2A28F32770560400646788 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B900E3348B0208F554895186 /* Pods-RudderAmplitude.debug.xcconfig */;
+			baseConfigurationReference = 3E54B6A7070163B5B83ED1EC /* Pods-RudderAmplitude.debug.xcconfig */;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = GTGKNDBD23;
+				DEVELOPMENT_TEAM = UCL2K3J73M;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -391,14 +393,14 @@
 		};
 		ED2A28F42770560400646788 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C75CCF0D7841B0F7789E73E5 /* Pods-RudderAmplitude.release.xcconfig */;
+			baseConfigurationReference = CECADF938407B3B139072E44 /* Pods-RudderAmplitude.release.xcconfig */;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = GTGKNDBD23;
+				DEVELOPMENT_TEAM = UCL2K3J73M;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";

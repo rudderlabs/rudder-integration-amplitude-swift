@@ -18,8 +18,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
-        let config: RSConfig = RSConfig(writeKey: "1wvsoF3Kx2SczQNlx1dvcqW9ODW")
-            .dataPlaneURL("https://rudderstacz.dataplane.rudderstack.com")
+        let config: RSConfig = RSConfig(writeKey: "<WRITE_KEY>")
+            .dataPlaneURL("<DATA_PLANE_URL>")
             .loglevel(.debug)
             .trackLifecycleEvents(true)
             .recordScreenViews(true)
@@ -52,10 +52,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             RSClient.sharedInstance().identify("UserId_3", traits: traits)
             RSClient.sharedInstance().track("UserId_TrackEvent_3")
 
-            let traits: [String: Any] = [
+            let traits1: [String: Any] = [
                 "key-1": "value-1"
             ]
-            RSClient.sharedInstance().identify("UserId_4", traits: traits)
+            RSClient.sharedInstance().identify("UserId_4", traits: traits1)
             RSClient.sharedInstance().track("UserId_TrackEvent_4")
         }
         func screen() {

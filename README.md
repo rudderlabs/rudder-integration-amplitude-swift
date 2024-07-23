@@ -29,7 +29,7 @@ This repository contains the resources and assets required to integrate the [Rud
 
 For more information on configuring Amplitude as a destination in RudderStack and the supported events and their mappings, refer to the [Amplitude documentation](https://www.rudderstack.com/docs/destinations/analytics/amplitude/).
 
-| Important: This device mode integration is supported for Amplitude v8.8.0 and above. |
+| Important: This device mode integration is supported for Amplitude v8.19.2 and above. |
 |:----|
 
 

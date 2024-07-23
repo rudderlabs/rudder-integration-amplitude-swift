@@ -11,7 +11,7 @@ end
 target 'RudderAmplitude' do
     project 'RudderAmplitude.xcodeproj'
     shared_pods
-    pod 'Amplitude', '8.8.0'
+   
 end
 
 target 'SampleAppObjC' do
