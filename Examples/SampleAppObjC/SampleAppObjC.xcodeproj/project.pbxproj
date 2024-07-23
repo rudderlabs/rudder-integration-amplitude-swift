@@ -3,11 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 53;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		795560778E3A8FCBCA6B28B5 /* Pods_SampleAppObjC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB61FD96E40C023BCB0D2C6A /* Pods_SampleAppObjC.framework */; };
+		99C92B3A2C492B6E00EB302D /* RudderAmplitude.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 99C92B392C492B6E00EB302D /* RudderAmplitude.framework */; };
 		EDB7218427DB4F70000EE8C4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EDB7218327DB4F70000EE8C4 /* AppDelegate.m */; };
 		EDB7218727DB4F70000EE8C4 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EDB7218627DB4F70000EE8C4 /* SceneDelegate.m */; };
 		EDB7218A27DB4F70000EE8C4 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EDB7218927DB4F70000EE8C4 /* ViewController.m */; };
@@ -19,6 +20,7 @@
 
 /* Begin PBXFileReference section */
 		718A0DAA37AEFA761559823D /* Pods-SampleAppObjC.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SampleAppObjC.debug.xcconfig"; path = "Target Support Files/Pods-SampleAppObjC/Pods-SampleAppObjC.debug.xcconfig"; sourceTree = "<group>"; };
+		99C92B392C492B6E00EB302D /* RudderAmplitude.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RudderAmplitude.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB61FD96E40C023BCB0D2C6A /* Pods_SampleAppObjC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SampleAppObjC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCDD25B700A16147F546933A /* Pods-SampleAppObjC.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SampleAppObjC.release.xcconfig"; path = "Target Support Files/Pods-SampleAppObjC/Pods-SampleAppObjC.release.xcconfig"; sourceTree = "<group>"; };
 		EDB7217F27DB4F70000EE8C4 /* SampleAppObjC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleAppObjC.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -40,6 +42,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				99C92B3A2C492B6E00EB302D /* RudderAmplitude.framework in Frameworks */,
 				795560778E3A8FCBCA6B28B5 /* Pods_SampleAppObjC.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -50,6 +53,7 @@
 		0D20BE4D11E3C23E263C3379 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				99C92B392C492B6E00EB302D /* RudderAmplitude.framework */,
 				BB61FD96E40C023BCB0D2C6A /* Pods_SampleAppObjC.framework */,
 			);
 			name = Frameworks;
@@ -365,7 +369,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Z6DGB573C6;
+				DEVELOPMENT_TEAM = UCL2K3J73M;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SampleAppObjC/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -395,7 +399,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Z6DGB573C6;
+				DEVELOPMENT_TEAM = UCL2K3J73M;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SampleAppObjC/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

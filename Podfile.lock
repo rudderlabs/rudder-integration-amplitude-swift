@@ -1,14 +1,14 @@
 PODS:
-  - Amplitude (8.8.0):
+  - Amplitude (8.19.2):
     - AnalyticsConnector (~> 1.0.0)
-  - AnalyticsConnector (1.0.0)
+  - AnalyticsConnector (1.0.3)
   - Rudder (2.0.1)
-  - RudderAmplitude (1.0.0):
-    - Amplitude (= 8.8.0)
-    - Rudder (~> 2.0.0)
+  - RudderAmplitude (1.1.0):
+    - Amplitude (= 8.19.2)
+    - Rudder (~> 2.0)
 
 DEPENDENCIES:
-  - Amplitude (= 8.8.0)
+  - Amplitude (= 8.19.2)
   - Rudder (~> 2.0.0)
   - RudderAmplitude (from `.`)
 
@@ -23,11 +23,11 @@ EXTERNAL SOURCES:
     :path: "."
 
 SPEC CHECKSUMS:
-  Amplitude: 710116f3539c225e86fb70a8abdcd20015683132
-  AnalyticsConnector: 4c386d5972ac9da86e22d668564dbbac97558754
+  Amplitude: 1c9fca37993bd5742cf7c121d432bf8bf5a28ccb
+  AnalyticsConnector: a53214d38ae22734c6266106c0492b37832633a9
   Rudder: 463af33116984b97f2a19d344e9ad491f164e43e
-  RudderAmplitude: 725c6d58b15e84eba81b1ec02e319f417809fa87
+  RudderAmplitude: c4889136fa463e87a9bd19b86de519a4859f29a2
 
-PODFILE CHECKSUM: 44f3946a4db0760576e188d6576e0093264c2127
+PODFILE CHECKSUM: ffaff3f4cf937d12284eb0ba1738351b9a626031
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.15.2

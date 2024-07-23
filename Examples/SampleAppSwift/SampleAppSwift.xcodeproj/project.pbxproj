@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -13,8 +13,24 @@
 		06EABC8D24665E470043D720 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 06EABC8B24665E470043D720 /* Main.storyboard */; };
 		06EABC8F24665E480043D720 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 06EABC8E24665E480043D720 /* Assets.xcassets */; };
 		06EABC9224665E480043D720 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 06EABC9024665E480043D720 /* LaunchScreen.storyboard */; };
+		99C92B3C2C49331800EB302D /* RudderAmplitude.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 99C92B3B2C49331800EB302D /* RudderAmplitude.framework */; };
+		99C92B3D2C49331800EB302D /* RudderAmplitude.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 99C92B3B2C49331800EB302D /* RudderAmplitude.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A6E1458EB27CC7C899E3B625 /* Pods_SampleAppSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B28C3D390F544487B3D0D25B /* Pods_SampleAppSwift.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		99C92B3E2C49331800EB302D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				99C92B3D2C49331800EB302D /* RudderAmplitude.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		06EABC8224665E470043D720 /* SampleAppSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleAppSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -27,6 +43,7 @@
 		06EABC9324665E480043D720 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1A80F07C523063EC35856541 /* Pods-RudderSampleAppSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RudderSampleAppSwift.debug.xcconfig"; path = "Target Support Files/Pods-RudderSampleAppSwift/Pods-RudderSampleAppSwift.debug.xcconfig"; sourceTree = "<group>"; };
 		236B7D3A09137DB00470A261 /* Pods-SampleAppSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SampleAppSwift.debug.xcconfig"; path = "Target Support Files/Pods-SampleAppSwift/Pods-SampleAppSwift.debug.xcconfig"; sourceTree = "<group>"; };
+		99C92B3B2C49331800EB302D /* RudderAmplitude.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RudderAmplitude.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B28C3D390F544487B3D0D25B /* Pods_SampleAppSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SampleAppSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D150D4E65D8E33B6545DAAB5 /* Pods-RudderSampleAppSwift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RudderSampleAppSwift.release.xcconfig"; path = "Target Support Files/Pods-RudderSampleAppSwift/Pods-RudderSampleAppSwift.release.xcconfig"; sourceTree = "<group>"; };
 		F8AFA8807BBE9556C48E8F8C /* Pods-SampleAppSwift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SampleAppSwift.release.xcconfig"; path = "Target Support Files/Pods-SampleAppSwift/Pods-SampleAppSwift.release.xcconfig"; sourceTree = "<group>"; };
@@ -37,6 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				99C92B3C2C49331800EB302D /* RudderAmplitude.framework in Frameworks */,
 				A6E1458EB27CC7C899E3B625 /* Pods_SampleAppSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -91,6 +109,7 @@
 		5BCFA8EE73AF6931DBCB65B4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				99C92B3B2C49331800EB302D /* RudderAmplitude.framework */,
 				B28C3D390F544487B3D0D25B /* Pods_SampleAppSwift.framework */,
 			);
 			name = Frameworks;
@@ -108,6 +127,7 @@
 				06EABC7F24665E470043D720 /* Frameworks */,
 				06EABC8024665E470043D720 /* Resources */,
 				A8CC967E9675A0E0EF3E78EA /* [CP] Embed Pods Frameworks */,
+				99C92B3E2C49331800EB302D /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -361,7 +381,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = GTGKNDBD23;
+				DEVELOPMENT_TEAM = UCL2K3J73M;
 				INFOPLIST_FILE = "$(SRCROOT)/SampleAppSwift/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -382,7 +402,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = GTGKNDBD23;
+				DEVELOPMENT_TEAM = UCL2K3J73M;
 				INFOPLIST_FILE = "$(SRCROOT)/SampleAppSwift/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
