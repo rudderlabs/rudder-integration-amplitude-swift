@@ -11,7 +11,6 @@ Pod::Spec.new do |s|
     s.source           = { :git => 'https://github.com/rudderlabs/rudder-integration-amplitude-swift.git' , :tag => "v#{s.version}"}
     
     s.ios.deployment_target = '13.0'
-    s.osx.deployment_target   = '10.14'
     s.tvos.deployment_target  = '12.1'
     s.watchos.deployment_target = '7.0'
 
